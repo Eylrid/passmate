@@ -79,7 +79,7 @@ class App(Tkinter.Frame):
         self.passentry2.grid(row=2, column=1, sticky='ew')
         self.passentry2.bind('<Key-Return>', self.go)
 
-        self.modevar = Tkinter.IntVar(self, value=0)
+        self.modevar = Tkinter.IntVar(self, value=1)
 
         self.base64radio = Tkinter.Radiobutton(self, text='Base 64', variable=self.modevar, value=1)
         self.base64radio.grid(row=3, column=0)
