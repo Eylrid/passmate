@@ -87,12 +87,21 @@ class App(Tkinter.Frame):
         self.diceradio = Tkinter.Radiobutton(self, text='Diceware', variable=self.modevar, value=2)
         self.diceradio.grid(row=3, column=1)
 
+        self.lengthlabel = Tkinter.Label(self, text='Max Length')
+        self.lengthlabel.grid(row=4, column=0)
+
+        self.lengthvar = Tkinter.IntVar(self, value=32)
+        self.lengthentry = Tkinter.Entry(self, textvariable=self.lengthvar)
+        self.lengthvar.set(50)
+        self.lengthentry.grid(row=4, column=1, sticky='ew')
+        self.lengthentry.bind('<Key-Return>', self.go)
+
         self.gobutton = Tkinter.Button(self, text='Go', command=self.go)
-        self.gobutton.grid(row=4, column=0)
+        self.gobutton.grid(row=5, column=0)
 
         self.resultvar = Tkinter.StringVar()
         self.resultentry = Tkinter.Entry(self, textvariable=self.resultvar)
-        self.resultentry.grid(row=4, column=1, sticky='ew')
+        self.resultentry.grid(row=5, column=1, sticky='ew')
 
     def go(self, event=None):
         pass1 = self.passentry1.get()
@@ -109,6 +118,13 @@ class App(Tkinter.Frame):
                 result = deephash64(fullpass)
             elif mode == 2:
                 result = dicephrase(fullpass, 5)
+
+        try:
+            length = int(self.lengthvar.get())
+        except ValueError:
+            pass
+        else:
+            result = result[:length]
 
         self.resultvar.set(result)
         self.resultentry.focus_set()
