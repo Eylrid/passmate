@@ -1,0 +1,2 @@
+from passmate import *
+main()
