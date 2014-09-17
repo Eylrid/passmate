@@ -69,39 +69,48 @@ class App(Tkinter.Frame):
         self.passlabel1 = Tkinter.Label(self, text='Enter Passphrase')
         self.passlabel1.grid(row=1, column=0)
 
-        self.passentry1 = Tkinter.Entry(self, show = '*')
+        self.passentry1 = Tkinter.Entry(self, show = '*', width=50)
         self.passentry1.grid(row=1, column=1, sticky='ew')
 
         self.passlabel2 = Tkinter.Label(self, text='Repeat Passphrase')
         self.passlabel2.grid(row=2, column=0)
 
-        self.passentry2 = Tkinter.Entry(self, show = '*')
+        self.passentry2 = Tkinter.Entry(self, show = '*', width=50)
         self.passentry2.grid(row=2, column=1, sticky='ew')
         self.passentry2.bind('<Key-Return>', self.go)
+
+        self.checktitlelabel = Tkinter.Label(self, text='Checksum:')
+        self.checktitlelabel.grid(row=3, column=0)
+
+        self.checksumlabel = Tkinter.Label(self, text='')
+        self.checksumlabel.grid(row=3, column=1)
 
         self.modevar = Tkinter.IntVar(self, value=1)
 
         self.base64radio = Tkinter.Radiobutton(self, text='Base 64', variable=self.modevar, value=1)
-        self.base64radio.grid(row=3, column=0)
+        self.base64radio.grid(row=4, column=0)
 
         self.diceradio = Tkinter.Radiobutton(self, text='Diceware', variable=self.modevar, value=2)
-        self.diceradio.grid(row=3, column=1)
+        self.diceradio.grid(row=4, column=1)
 
         self.lengthlabel = Tkinter.Label(self, text='Max Length')
-        self.lengthlabel.grid(row=4, column=0)
+        self.lengthlabel.grid(row=5, column=0)
 
         self.lengthvar = Tkinter.IntVar(self, value=32)
         self.lengthentry = Tkinter.Entry(self, textvariable=self.lengthvar)
         self.lengthvar.set(50)
-        self.lengthentry.grid(row=4, column=1, sticky='ew')
+        self.lengthentry.grid(row=5, column=1, sticky='ew')
         self.lengthentry.bind('<Key-Return>', self.go)
 
         self.gobutton = Tkinter.Button(self, text='Go', command=self.go)
-        self.gobutton.grid(row=5, column=0)
+        self.gobutton.grid(row=6, column=0)
 
         self.resultvar = Tkinter.StringVar()
-        self.resultentry = Tkinter.Entry(self, textvariable=self.resultvar)
-        self.resultentry.grid(row=5, column=1, sticky='ew')
+        self.resultentry = Tkinter.Entry(self, textvariable=self.resultvar, width=50)
+        self.resultentry.grid(row=6, column=1, sticky='ew')
+
+        self.savebutton = Tkinter.Button(self, text='Save Params', command=self.save_parameters)
+        self.savebutton.grid(row=7, column=0)
 
     def go(self, event=None):
         pass1 = self.passentry1.get()
@@ -109,6 +118,7 @@ class App(Tkinter.Frame):
         if pass1 != pass2:
             result = "Passphrases don't match"
         else:
+            checksum = deephash64(pass1)[:8]
             id = self.identry.get()
             fullpass = id + pass1
             mode = self.modevar.get()
@@ -126,9 +136,18 @@ class App(Tkinter.Frame):
         else:
             result = result[:length]
 
+        self.checksumlabel['text'] = checksum
         self.resultvar.set(result)
         self.resultentry.focus_set()
         self.resultentry.selection_range(0, 'end')
+
+    def save_parameters(self):
+        id = self.identry.get()
+        mode = str(self.modevar.get())
+        length = str(self.lengthvar.get())
+        string = ', '.join((id, mode, length))+'\n'
+        with open('pass_parameters.txt', 'a') as file:
+            file.write(string)
 
     def close_window(self):
         try:
