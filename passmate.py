@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import hashlib, Tkinter, math
 from Tkinter import _tkinter
 
@@ -117,6 +118,7 @@ class App(Tkinter.Frame):
         pass2 = self.passentry2.get()
         if pass1 != pass2:
             result = "Passphrases don't match"
+            checksum = result
         else:
             checksum = deephash64(pass1)[:8]
             id = self.identry.get()
